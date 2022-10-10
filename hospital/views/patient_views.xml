@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hospital_patient_view_tree" model="ir.ui.view">
+        <field name="name">hospital.patient.view.tree</field>
+        <field name="model">res.hospital.patient</field>
+        <field name="arch" type="xml">
+            <tree string="Hospital Patient">
+                <field name="patient_name" />
+                <field name="patient_ref" />
+                <field name="patient_gendar" />
+                <field name="patient_age" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="hospital_patient_view_form" model="ir.ui.view">
+        <field name="name">hospital.patient.view.form</field>
+        <field name="model">res.hospital.patient</field>
+        <field name="arch" type="xml">
+            <form string="Hospital Patient">
+                <sheet>
+                    <widget name="web_ribbon" title="New Appointment" bg_color="bg-success" attrs="{'invisible': [('patient_create', '=', False)]}"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="patient_sequence" readonly="1" />
+                        </h1>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar" />
+                    <group>
+                        <group >
+                        <field name="patient_name" nolable='1' />
+                        <field name="patient_gendar" />
+                        <field name="patient_age" />
+                        <field name="patient_create" widget="boolean_toggle" />
+                        </group>
+                        <group>
+                            <field name="patient_date_of_birth" />
+                            <field name="patient_ref" />
+                            <field name="active" invisible="1" />
+                        </group>
+                    </group>
+                </sheet>
+                <!-- Chatter Show Form View -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="hospital_patient_view_search" model="ir.ui.view">
+        <field name="name">hospital.patient.view.search</field>
+        <field name="model">res.hospital.patient</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Search View Normal -->
+                <field name="patient_name" string="Patient Name " filter_domain = "['|','|',('patient_name','ilike',self),('patient_ref','ilike',self),('patient_gendar','ilike', self),('patient_age','ilike', self)]" />
+                <field name="patient_ref" filter_domain = "['|','|',('patient_name','ilike',self),('patient_ref','ilike',self),('patient_gendar','ilike', self),('patient_age','ilike', self)]" />
+                <field name="patient_gendar" string="Patient Gendar " filter_domain = "['|','|',('patient_name','ilike',self),('patient_ref','ilike',self),('patient_gendar','ilike', self),('patient_age','ilike', self)]" />
+                <field name="patient_age" string="Patient Age " filter_domain = "['|','|',('patient_name','ilike',self),('patient_ref','ilike',self),('patient_gendar','ilike', self),('patient_age','ilike', self)]" /> 
+
+                <!-- using of the filter search  -->
+                <filter name="filter_male" string="Male" domain="[('patient_gendar', '=', 'male')]" /> 
+                <filter name="filter_female" string="Female" domain="[('patient_gendar', '=', 'female')]" />
+                <separator/>
+                <!-- <filter name="filter_Kids" string="Kids" domain="[('patient_age','&lt;=',7)]" /> -->
+                <filter name="filter_Archived" string="Archived" domain="[('active', '=', False)]" />
+                <separator />
+                <!-- Today Record Filter. -->
+                <filter name="create_date" string="Today Record" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <!-- Seven day Record Filter -->
+                <filter name="seven_day_filter" string="This Week Record" domain="[('create_date', '>=', (context_today() + datetime.timedelta(-6)).strftime('%Y-%m-%d'))]" />
+
+                <!-- using of the group by search. -->
+                <group string="Group By">
+                    <filter name="group_by_gendar" string="Gendar" context="{'group_by': 'patient_gendar'}" />
+                    <filter name="group_by_age" string="Age" context="{'group_by':'patient_age'}" />
+                </group>
+                <!-- show side menu using searchpanel. -->
+                <searchpanel>
+                    <field name="patient_gendar" icon="fa-users" enable_counters="1" />
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+    <record id="hospital_patient_actions" model="ir.actions.act_window">
+        <field name="name">Hospital Patient</field>
+        <field name="res_model">res.hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_male':1, 'search_default_group_by_gendar':1}</field> <!--Set Default Filter And Group By show list-->
+        <field name="help" type="html">
+            <p>
+                Create your first patient !
+            </p>
+        </field>
+    </record>
+
+</odoo>

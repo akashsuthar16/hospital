@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hospital_appointment_view_tree" model="ir.ui.view">
+        <field name="name">hospital.appointment.view.tree</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <!-- <tree create="0" delete="0"> -->
+            <tree decoration-info="state == 'draft'" decoration-danger="state == 'cancel'" sample="1" multi_edit="1">
+                <field name="patient_ids" widget="many2one_avatar" />
+                <field name="ref_patient" optional="show" />
+                <field name="doctor_id" widget="many2one_avatar_user" />
+                <field name="appointment_time" />
+                <field name="patient_gendar" optional="hide" />
+                <field name="activity_ids" widget="list_activity" optional="show" />
+                <field name="state" widget="badge" 
+                decoration-success="state == 'done'"
+                decoration-info="state == 'draft'"
+                decoration-danger="state == 'cancel'"
+                decoration-warning="state == 'in_consultation'" />
+            </tree>
+        </field>
+    </record>
+    <record id="hospital_appointment_view_form" model="ir.ui.view">
+        <field name="name">hospital.appointment.view.form</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <form>
+            <!-- <form create="0" edit="0" delete="0"> -->
+                <header>
+                    <button string="In Consultation" name="action_in_consultation" type="object" states="draft" class="oe_highlight" data-hotkey="I" />
+                    <button string="Mark As Done" name="action_done" type="object" states="in_consultation" class="oe_highlight" data-hotkey="D" />
+                    <button string="Cancel" name="action_cancel" type="object" states="draft,in_consultation" data-hotkey="O" />
+                    <button string="Reset To Draft" name="action_draft" type="object" states="cancel,done" class="oe_highlight" data-hotkey="E" />
+                    <field name="state" widget="statusbar" nolabel="1"  statusbar_visible="draft,in_consultation,done" /> <!-- options="{'clickable':'1'}"-->
+                </header>
+                <sheet>
+                    <!-- <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_open_related_taxes"
+                                type="object" icon="fa-bars">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="related_taxes_amount"/>
+                                </span>
+                                <span class="o_stat_text">Taxes</span>
+                            </div>
+                        </button>
+                    </div> -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference_no" readonly="1" />
+                        </h1>
+                    </div>
+                    <div>
+                        <h1>
+                            <field name="priority" widget="priority" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Many2one">
+                            <field name="patient_ids" />
+                            <field name="doctor_id" widget="many2one_avatar" />
+                            <field name="appointment_time" />
+                            <field name="activity_ids" />
+                        </group>
+                        <group string="Related And onchangeField">
+                            <field name="patient_gendar" />
+                            <field name="ref_patient" default_focus="1" />
+                        </group>
+                        <group string="Two of Button Action And Object">
+                            <field name="hide_sales_price" groups="base.group_no_one" widget="boolean_toggle" />
+                            <button string="Object Button" name="action_object_test" type="object" 
+                            class="oe_highlight" groups="base.group_no_one" />
+                            <button string="Action Button" name="%(hospital.hospital_patient_actions)d" type="action" 
+                            confirm="Are you sure to open the patient action?" class="oe_highlight" groups="base.group_no_one" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="prescription" string="Prescription">
+                            <field name="patient_Prescription" placeholder="Enter your prescription"
+                             />
+                        </page>
+                        <page name="pharmacy" string="Pharmacy">
+                            <field name="pharmacy_line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="price_unit" 
+                                    attrs="{'column_invisible':[('parent.hide_sales_price','=',True)]}" />
+                                    <field name="qty" />
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="product_id" />
+                                            <field name="price_unit" 
+                                            attrs="{'column_invisible':[('parent.hide_sales_price','=',True)]}" />
+                                        <field name="qty" />
+                                    </group>
+                                </form>  
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- Chatter Show Form View -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="hospital_appointment_action" model="ir.actions.act_window">
+        <field name="name">Hospital Appointment</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p>
+                Create your hospital appointment!
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="hospital_appointment_menu2"
+        name="Hospital Appointment"
+        action="hospital_appointment_action"
+        parent="hospital_appointment_menu"
+        sequence="0"/>
+
+</odoo>

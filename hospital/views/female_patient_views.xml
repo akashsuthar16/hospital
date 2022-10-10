@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--Apply Domain For Menu-->
+    <record id="hospital_female_patient_actions" model="ir.actions.act_window">
+        <field name="name">Hospital Female Patient</field>
+        <field name="res_model">res.hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'default_patient_gendar':'female'}</field> <!--Set Default Value show Using Context -->
+        <field name="domain">[('patient_gendar', '=', 'female'), ('patient_age','&lt;=',7)]</field> <!-- Set Show Value of Fitlter Domain -->
+        <field name="help" type="html">
+            <p>
+                Create your female patient !
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="hospital_female_patient_menu"
+        name="Female Patient"
+        action="hospital_female_patient_actions"
+        parent="hospital_configuration_menu"
+        sequence="30"/>
+
+</odoo>
